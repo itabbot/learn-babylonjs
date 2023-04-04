@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="UTF-8" />
+    <title>最简 Babylon PC 应用（全局构建版）</title>
+
+    <!-- 将画布铺满界面 -->
+    <style>
+      html,
+      body {
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      #render_canvas {
+        width: 100%;
+        height: 100%;
+        touch-action: none;
+      }
+    </style>
+
+    <!-- 引入 Babylon.js -->
+    <script src="babylon-5.53.0.js"></script>
+  </head>
+  <body>
+    <!-- 画布元素 -->
+    <canvas id="render_canvas"></canvas>
+
+    <script>
+      // 获取画布元素
+      const canvas = document.getElementById('render_canvas');
+
+      // 创建 BABYLON 引擎实例
+      // 并指定渲染的画布
+      const engine = new BABYLON.Engine(canvas, true);
+
+      // 创建一个基本的场景实例
+      // 并指定渲染此场景的引擎
+      const scene = new BABYLON.Scene(engine);
+
+      // 创建一个自由相机实例
+      // 并在场景中定位相机的起始位置
+      const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
+      // 设置相机对准的目标位置：场景原点
+      camera.setTarget(BABYLON.Vector3.Zero());
+      // 将相机附加到画布上
+      camera.attachControl(canvas, true);
+
+      // 创建一个半球光源实例（不能投射阴影）
+      // 并指定光的反射方向
+      const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), scene);
+      // 灯光默认强度为 1，这里把灯光调暗一点
+      light.intensity = 0.7;
+
+      // 在场景中添加一个内置的 “球体” 形状
+      const sphere = BABYLON.MeshBuilder.CreateSphere('sphere', { diameter: 2 }, scene);
+      // 将球体向上移动一个单位高度
+      sphere.position.y = 1;
+
+      // 在场景中添加一个内置的 “地面” 形状
+      const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 6, height: 6 }, scene);
+
+      // 注册一个渲染循环来重复渲染场景
+      engine.runRenderLoop(function () {
+        scene.render();
+      });
+
+      // 监听浏览器大小调整事件
+      window.addEventListener('resize', function () {
+        engine.resize();
+      });
+    </script>
+  </body>
+</html>
